@@ -1,0 +1,22 @@
+from collections import deque
+
+def rotar_derecha(matriz, k):
+    n = len(matriz)
+    if n == 0:
+        return matriz  # caso borde: lista vacía
+    k = k % n  # optimización para cuando k > n
+
+    cola = deque(matriz)
+
+    for _ in range(k):
+        ultimo = cola.pop()  # elimina el último elemento
+        cola.appendleft(ultimo)  # lo inserta al principio
+
+    return list(cola)  # convertir de nuevo a lista normal
+
+# Casos de prueba
+
+# Caso 3: Lista vacía
+matriz_3 = []
+k_3 = 3
+print("Caso 3:", rotar_derecha(matriz_3, k_3))  # Resultado esperado: []
