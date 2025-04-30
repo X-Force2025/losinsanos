@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Altura en Árboles Binarios</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --bg-color: #f9f9f9;
+            --code-bg: #f5f5f5;
+            --code-border: #e0e0e0;
+            --text-color: #333;
+            --light-text: #777;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+        
+        h3 {
+            color: var(--secondary-color);
+        }
+        
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            position: relative;
+        }
+        
+        .code-block {
+            position: relative;
+        }
+        
+        .code-block .line-numbers {
+            position: absolute;
+            left: 0;
+            top: 0;
+            padding: 1rem 0.5rem;
+            background-color: rgba(0,0,0,0.05);
+            color: var(--light-text);
+            text-align: right;
+            user-select: none;
+        }
+        
+        .highlight {
+            background-color: rgba(255, 255, 0, 0.2);
+            border-radius: 2px;
+            padding: 2px 0;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .button-secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        .button-secondary:hover {
+            background-color: #27ae60;
+        }
+        
+        #tree-visualization {
+            width: 100%;
+            height: 400px;
+            margin: 2rem 0;
+            border: 1px solid var(--code-border);
+            border-radius: 8px;
+            background-color: white;
+        }
+        
+        .svg-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+        }
+        
+        svg {
+            max-width: 100%;
+        }
+        
+        .node circle {
+            fill: var(--secondary-color);
+            stroke: #27ae60;
+            stroke-width: 2px;
+            transition: fill 0.3s, r 0.3s;
+        }
+        
+        .node text {
+            font: 12px sans-serif;
+            fill: white;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+        
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+        }
+        
+        .active-node circle {
+            fill: var(--accent-color);
+            r: 15;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .results-table th, .results-table td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        
+        .results-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .results-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .tab-container {
+            margin-top: 2rem;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            margin-bottom: -1px;
+        }
+        
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        
+        .tab-button.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+            border: 1px solid #ccc;
+            border-radius: 0 4px 4px 4px;
+            background-color: white;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .algorithm-steps {
+            counter-reset: step;
+            padding-left: 2rem;
+        }
+        
+        .algorithm-steps li {
+            position: relative;
+            margin-bottom: 1rem;
+            padding-left: 0.5rem;
+        }
+        
+        .algorithm-steps li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: -2rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            section {
+                padding: 1.5rem;
+            }
+        }
+        
+        .explanation {
+            background-color: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .warning {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .step-display {
+            margin: 1rem 0;
+            padding: 1rem;
+            background-color: var(--code-bg);
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            background-color: #333;
+            color: white;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Cálculo de Altura en Árboles Binarios</h1>
+        <p>Una explicación visual del algoritmo recursivo para calcular la altura de un árbol binario</p>
+    </header>
+    
+    <div class="container">
+        <section id="intro">
+            <h2>Introducción</h2>
+            <p>En estructuras de datos, un <strong>árbol binario</strong> es una estructura jerárquica donde cada nodo tiene como máximo dos hijos: uno izquierdo y uno derecho. La <strong>altura</strong> de un árbol binario se define como la longitud del camino más largo desde la raíz hasta cualquier hoja.</p>
+            
+            <div class="explanation">
+                <p><strong>¿Por qué es importante la altura de un árbol?</strong> La altura es un factor crítico para el rendimiento de operaciones en árboles. Algoritmos que operan sobre árboles suelen tener una complejidad temporal que depende de la altura.</p>
+            </div>
+        </section>
+        
+        <section id="tree-structure">
+            <h2>Estructura de un Árbol Binario</h2>
+            <p>Antes de calcular la altura, necesitamos entender cómo representar un árbol binario en código:</p>
+            
+            <div class="code-block">
+                <pre><code>class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right</code></pre>
+            </div>
+            
+            <p>Esta clase <code>TreeNode</code> define:</p>
+            <ul>
+                <li><code>val</code>: El valor almacenado en el nodo</li>
+                <li><code>left</code>: Una referencia al hijo izquierdo (otro nodo o <code>None</code>)</li>
+                <li><code>right</code>: Una referencia al hijo derecho (otro nodo o <code>None</code>)</li>
+            </ul>
+            
+            <h3>Creación de un Árbol Binario</h3>
+            <p>Para crear un árbol binario, instanciamos varios nodos y establecemos las relaciones entre ellos:</p>
+            
+            <div class="code-block">
+                <pre><code># Crear nodos individuales
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.left = TreeNode(4)
+root.left.right = TreeNode(5)</code></pre>
+            </div>
+            
+            <div class="svg-container">
+                <svg id="tree-structure-svg" width="400" height="300" viewBox="0 0 400 300">
+                    <!-- Círculos para los nodos -->
+                    <g class="node" id="node-1">
+                        <circle cx="200" cy="50" r="20" />
+                        <text x="200" y="50">1</text>
+                    </g>
+                    <g class="node" id="node-2">
+                        <circle cx="125" cy="120" r="20" />
+                        <text x="125" y="120">2</text>
+                    </g>
+                    <g class="node" id="node-3">
+                        <circle cx="275" cy="120" r="20" />
+                        <text x="275" y="120">3</text>
+                    </g>
+                    <g class="node" id="node-4">
+                        <circle cx="75" cy="190" r="20" />
+                        <text x="75" y="190">4</text>
+                    </g>
+                    <g class="node" id="node-5">
+                        <circle cx="175" cy="190" r="20" />
+                        <text x="175" y="190">5</text>
+                    </g>
+                    
+                    <!-- Líneas para las conexiones -->
+                    <line class="link" x1="190" y1="65" x2="135" y2="105" />
+                    <line class="link" x1="210" y1="65" x2="265" y2="105" />
+                    <line class="link" x1="115" y1="135" x2="85" y2="175" />
+                    <line class="link" x1="135" y1="135" x2="165" y2="175" />
+                </svg>
+            </div>
+        </section>
+        
+        <section id="height-algorithm">
+            <h2>Algoritmo para Calcular la Altura</h2>
+            <p>El algoritmo para calcular la altura de un árbol binario utiliza recursión, explorando tanto el subárbol izquierdo como el derecho y eligiendo el camino más largo:</p>
+            
+            <div class="code-block">
+                <pre><code>def tree_height(root):
+    # Caso base: un árbol vacío tiene altura -1
+    if root is None:
+        return -1
+    
+    # Caso recursivo: la altura es 1 + la altura máxima de los subárboles
+    left_height = tree_height(root.left)
+    right_height = tree_height(root.right)
+    
+    # Retornar la altura máxima del subárbol izquierdo o derecho más 1
+    return max(left_height, right_height) + 1</code></pre>
+            </div>
+            
+            <div class="explanation">
+                <h3>¿Por qué un árbol vacío tiene altura -1?</h3>
+                <p>Esta es una convención que nos permite manejar correctamente la altura de los árboles. Si tenemos un árbol con un solo nodo (la raíz), su altura debería ser 0. Para lograr esto, necesitamos que un árbol vacío tenga altura -1, ya que max(-1, -1) + 1 = 0.</p>
+            </div>
+            
+            <h3>Pasos del Algoritmo</h3>
+            <ol class="algorithm-steps">
+                <li>Si el árbol está vacío (la raíz es <code>None</code>), retornar -1.</li>
+                <li>Calcular recursivamente la altura del subárbol izquierdo.</li>
+                <li>Calcular recursivamente la altura del subárbol derecho.</li>
+                <li>Retornar 1 más el máximo de las alturas de los subárboles.</li>
+            </ol>
+        </section>
+        
+        <section id="visualization">
+            <h2>Visualización del Algoritmo</h2>
+            <p>Veamos cómo funciona el algoritmo paso a paso en nuestro ejemplo:</p>
+            
+            <div id="tree-visualization"></div>
+            
+            <div class="controls">
+                <button id="start-visualization" class="button-secondary">Iniciar Visualización</button>
+                <button id="step-visualization">Siguiente Paso</button>
+                <button id="reset-visualization">Reiniciar</button>
+            </div>
+            
+            <div class="step-display" id="step-info">
+                Presiona "Iniciar Visualización" para comenzar.
+            </div>
+        </section>
+        
+        <section id="test-cases">
+            <h2>Casos de Prueba</h2>
+            <p>Probemos el algoritmo con diferentes tipos de árboles:</p>
+            
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <div class="tab-button active" data-tab="normal-tree">Árbol Normal</div>
+                    <div class="tab-button" data-tab="empty-tree">Árbol Vacío</div>
+                    <div class="tab-button" data-tab="single-node">Árbol de Un Solo Nodo</div>
+                </div>
+                
+                <div id="normal-tree" class="tab-content active">
+                    <h3>Árbol Normal</h3>
+                    <div class="svg-container">
+                        <svg width="300" height="200" viewBox="0 0 300 200">
+                            <!-- Nodos -->
+                            <g class="node">
+                                <circle cx="150" cy="30" r="20" />
+                                <text x="150" y="30">1</text>
+                            </g>
+                            <g class="node">
+                                <circle cx="90" cy="90" r="20" />
+                                <text x="90" y="90">2</text>
+                            </g>
+                            <g class="node">
+                                <circle cx="210" cy="90" r="20" />
+                                <text x="210" y="90">3</text>
+                            </g>
+                            <g class="node">
+                                <circle cx="50" cy="150" r="20" />
+                                <text x="50" y="150">4</text>
+                            </g>
+                            <g class="node">
+                                <circle cx="130" cy="150" r="20" />
+                                <text x="130" y="150">5</text>
+                            </g>
+                            
+                            <!-- Conexiones -->
+                            <line class="link" x1="140" y1="45" x2="100" y2="75" />
+                            <line class="link" x1="160" y1="45" x2="200" y2="75" />
+                            <line class="link" x1="80" y1="105" x2="60" y2="135" />
+                            <line class="link" x1="100" y1="105" x2="120" y2="135" />
+                        </svg>
+                    </div>
+                    <p>Altura esperada: <strong>2</strong></p>
+                    <code>tree_height(root) = max(tree_height(root.left), tree_height(root.right)) + 1 = max(1, 0) + 1 = 2</code>
+                </div>
+                
+                <div id="empty-tree" class="tab-content">
+                    <h3>Árbol Vacío</h3>
+                    <p>Un árbol vacío simplemente no tiene nodos (root = None).</p>
+                    <p>Altura esperada: <strong>-1</strong></p>
+                    <code>tree_height(None) = -1</code>
+                </div>
+                
+                <div id="single-node" class="tab-content">
+                    <h3>Árbol de Un Solo Nodo</h3>
+                    <div class="svg-container">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <g class="node">
+                                <circle cx="50" cy="50" r="20" />
+                                <text x="50" y="50">1</text>
+                            </g>
+                        </svg>
+                    </div>
+                    <p>Altura esperada: <strong>0</strong></p>
+                    <code>tree_height(single_node) = max(tree_height(None), tree_height(None)) + 1 = max(-1, -1) + 1 = 0</code>
+                </div>
+            </div>
+            
+            <h3>Resultados de las Pruebas</h3>
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Caso de Prueba</th>
+                        <th>Altura Esperada</th>
+                        <th>Altura Obtenida</th>
+                        <th>Resultado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Árbol Normal</td>
+                        <td>2</td>
+                        <td>2</td>
+                        <td>ÉXITO</td>
+                    </tr>
+                    <tr>
+                        <td>Árbol Vacío</td>
+                        <td>-1</td>
+                        <td>-1</td>
+                        <td>ÉXITO</td>
+                    </tr>
+                    <tr>
+                        <td>Árbol de Un Solo Nodo</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>ÉXITO</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section id="code-complete">
+            <h2>Código Completo</h2>
+            <p>Aquí está el código completo que incluye tanto la implementación como los casos de prueba:</p>
+            
+            <div class="code-block">
+                <pre><code>class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def tree_height(root):
+    # Caso base: un árbol vacío tiene altura -1
+    if root is None:
+        return -1
+    
+    # Caso recursivo: la altura es 1 + la altura máxima de los subárboles
+    left_height = tree_height(root.left)
+    right_height = tree_height(root.right)
+    
+    # Retornar la altura máxima del subárbol izquierdo o derecho más 1
+    return max(left_height, right_height) + 1
+
+# Casos de prueba
+def test_tree_height():
+    # Caso de Prueba 1: Árbol normal
+    root = TreeNode(1)
+    root.left = TreeNode(2)
+    root.right = TreeNode(3)
+    root.left.left = TreeNode(4)
+    root.left.right = TreeNode(5)
+    
+    # Caso de Prueba 2: Árbol vacío
+    empty_tree = None
+    
+    # Caso de Prueba 3: Árbol de un solo nodo
+    single_node = TreeNode(1)
+    
+    # Ejecutar pruebas e imprimir resultados
+    casos_prueba = [
+        ("Árbol Normal", root, 2),
+        ("Árbol Vacío", empty_tree, -1),
+        ("Árbol de Un Solo Nodo", single_node, 0)
+    ]
+    
+    for nombre, arbol, esperado in casos_prueba:
+        resultado = tree_height(arbol)
+        estado = "ÉXITO" if resultado == esperado else "FALLO"
+        print(f"Prueba: {nombre} - Esperado: {esperado}, Obtenido: {resultado} - {estado}")
+
+test_tree_height()</code></pre>
+            </div>
+        </section>
+        
+        <section id="applications">
+            <h2>Aplicaciones Prácticas</h2>
+            <p>Conocer la altura de un árbol binario es útil en muchos contextos:</p>
+            
+            <ul>
+                <li><strong>Análisis de rendimiento:</strong> La altura influye directamente en la eficiencia de operaciones como búsqueda e inserción.</li>
+                <li><strong>Balanceo de árboles:</strong> Árboles balanceados mantienen la altura mínima posible, mejorando el rendimiento.</li>
+                <li><strong>Verificación de propiedades:</strong> La altura es crucial para verificar propiedades como si un árbol es completo o perfecto.</li>
+                <li><strong>Optimización de algoritmos:</strong> Conocer la altura permite predecir y optimizar el rendimiento de algoritmos que operan sobre árboles.</li>
+            </ul>
+        </section>
+        
+        <section id="conclusion">
+            <h2>Conclusión</h2>
+            <p>El cálculo de la altura de un árbol binario demuestra elegantemente el poder de la recursión. Explorando recursivamente ambos subárboles y eligiendo el más profundo, podemos determinar la altura con facilidad.</p>
+            
+            <div class="explanation">
+                <p>La implementación vista tiene una complejidad temporal de O(n), donde n es el número de nodos en el árbol, ya que cada nodo es visitado exactamente una vez.</p>
+            </div>
+        </section>
+    </div>
+    
+    <footer class="footer">
+        <p>Ejemplo educativo - Algoritmos de Árboles Binarios - 2025</p>
+    </footer>
+
+    <script>
+        // Funcionalidad para las pestañas
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Desactivar todas las pestañas
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Activar la pestaña seleccionada
+                button.classList.add('active');
+                document.getElementById(button.getAttribute('data-tab')).classList.add('active');
+            });
+        });
+        
+        // Clase para representar un nodo de árbol
+        class TreeNode {
+            constructor(val, left = null, right = null) {
+                this.val = val;
+                this.left = left;
+                this.right = right;
+            }
+        }
+        
+        // Función para calcular la altura de un árbol
+        function treeHeight(root) {
+            if (root === null) {
+                return -1;
+            }
+            
+            const leftHeight = treeHeight(root.left);
+            const rightHeight = treeHeight(root.right);
+            
+            return Math.max(leftHeight, rightHeight) + 1;
+        }
+        
+        // Crear árbol de ejemplo
+        const root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(3);
+        root.left.left = new TreeNode(4);
+        root.left.right = new TreeNode(5);
+        
+        // Visualización del algoritmo
+        const treeVisualization = document.getElementById('tree-visualization');
+        const stepInfo = document.getElementById('step-info');
+        const startButton = document.getElementById('start-visualization');
+        const stepButton = document.getElementById('step-visualization');
+        const resetButton = document.getElementById('reset-visualization');
+        
+        // Objeto para mantener el estado de la visualización
+        const visState = {
+            step: 0,
+            maxSteps: 12,
+            isRunning: false,
+            calls: []
+        };
+        
+        // Inicializar SVG para la visualización
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("width", "100%");
+        svg.setAttribute("height", "100%");
+        svg.setAttribute("viewBox", "0 0 600 300");
+        treeVisualization.appendChild(svg);
+        
+        // Crear representación visual del árbol
+        function createTreeVisualization() {
+            // Limpiar SVG
+            while (svg.firstChild) {
+                svg.removeChild(svg.firstChild);
+            }
+            
+            // Crear nodos
+            createNode(root, 300, 50, 1);
+            createNode(root.left, 150, 100, 2);
+            createNode(root.right, 450, 100, 3);
+            createNode(root.left.left, 75, 150, 4);
+            createNode(root.left.right, 225, 150, 5);
+            
+            // Crear conexiones
+            createLink(300, 50, 150, 100); // 1 -> 2
+            createLink(300, 50, 450, 100); // 1 -> 3
+            createLink(150, 100, 75, 150); // 2 -> 4
+            createLink(150, 100, 225, 150); // 2 -> 5
+        }
+        
+        // Crear un nodo visual
+        function createNode(node, x, y, val) {
+            const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            g.setAttribute("class", "node");
+            g.setAttribute("id", `node-${val}`);
+            
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", x);
+            circle.setAttribute("cy", y);
+            circle.setAttribute("r", "20");
+            
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", x);
+            text.setAttribute("y", y);
+            text.textContent = val;
+            
+            g.appendChild(circle);
+            g.appendChild(text);
+            svg.appendChild(g);
+        }
+        
+        // Crear una conexión visual
+        function createLink(x1, y1, x2, y2) {
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("class", "link");
+            line.setAttribute("x1", x1);
+            line.setAttribute("y1", y1 + 20); // Ajustar para comenzar en el borde del círculo
+            line.setAttribute("x2", x2);
+            line.setAttribute("y2", y2 - 20); // Ajustar para terminar en el borde del círculo
+            
+            svg.appendChild(line);
+        }
+        
+        // Activar un nodo en la visualización
+        function activateNode(id) {
+            // Desactivar todos los nodos
+            document.querySelectorAll('.node').forEach(node => {
+                node.classList.remove('active-node');
+            });
+            
+            // Activar el nodo especificado
+            const node = document.getElementById(`node-${id}`);
+            if (node) {
+                node.classList.add('active-node');
+            }
+        }
+        
+        // Generar pasos de la visualización
+        function generateSteps() {
+            visState.calls = [
+                { message: "Llamando a tree_height(root)", nodeId: 1 },
+                { message: "Llamando a tree_height(root.left)", nodeId: 2 },
+                { message: "Llamando a tree_height(root.left.left)", nodeId: 4 },
+                { message: "Nodo 4 no tiene hijos. Altura = 0", nodeId: 4 },
+                { message: "Llamando a tree_height(root.left.right)", nodeId: 5 },
+                { message: "Nodo 5 no tiene hijos. Altura = 0", nodeId: 5 },
+                { message: "Altura del nodo 2 = max(0, 0) + 1 = 1", nodeId: 2 },
+                { message: "Llamando a tree_height(root.right)", nodeId: 3 },
+                { message: "Nodo 3 no tiene hijos. Altura = 0", nodeId: 3 },
+                { message: "Altura del nodo 1 = max(1, 0) + 1 = 2", nodeId: 1 },
+                { message: "Resultado final: Altura del árbol = 2", nodeId: 1 }
+            ];
+            visState.step = 0;
+            visState.isRunning = true;
+        }
+
+        function showNextStep() {
+            if (visState.step < visState.calls.length) {
+                const step = visState.calls[visState.step];
+                stepInfo.textContent = step.message;
+                activateNode(step.nodeId);
+                visState.step++;
+            } else {
+                stepInfo.textContent = "Visualización completada.";
+                visState.isRunning = false;
+            }
+        }
+
+        function resetVisualization() {
+            visState.step = 0;
+            visState.isRunning = false;
+            stepInfo.textContent = "Presiona 'Iniciar Visualización' para comenzar.";
+            document.querySelectorAll('.node').forEach(node => {
+                node.classList.remove('active-node');
+            });
+        }
+
+        startButton.addEventListener('click', () => {
+            createTreeVisualization();
+            generateSteps();
+            showNextStep();
+        });
+
+        stepButton.addEventListener('click', () => {
+            if (visState.isRunning) {
+                showNextStep();
+            }
+        });
+
+        resetButton.addEventListener('click', () => {
+            resetVisualization();
+        });
+    </script>
+</body>
+</html>
