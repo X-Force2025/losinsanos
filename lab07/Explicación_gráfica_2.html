@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conteo de Hojas en Árboles Binarios</title>
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2ecc71;
+      --accent-color: #e74c3c;
+      --bg-color: #f9f9f9;
+      --code-bg: #f5f5f5;
+      --code-border: #e0e0e0;
+      --text-color: #333;
+      --light-text: #777;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary-color), #2980b9);
+      color: white;
+      text-align: center;
+      padding: 2rem 0;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem;
+    }
+    section {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 0.5rem;
+    }
+    h3 {
+      color: var(--secondary-color);
+    }
+    pre {
+      background-color: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 4px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .explanation {
+      background-color: rgba(46, 204, 113, 0.1);
+      border-left: 4px solid var(--secondary-color);
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .step-display {
+      margin: 1rem 0;
+      padding: 1rem;
+      background-color: var(--code-bg);
+      border-radius: 4px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .svg-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 2rem 0;
+    }
+    svg {
+      max-width: 100%;
+    }
+    .node circle {
+      fill: var(--secondary-color);
+      stroke: #27ae60;
+      stroke-width: 2px;
+      transition: fill 0.3s, r 0.3s;
+    }
+    .node text {
+      font: 12px sans-serif;
+      fill: white;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+    .link {
+      fill: none;
+      stroke: #ccc;
+      stroke-width: 2px;
+    }
+    .active-node circle {
+      fill: var(--accent-color);
+      r: 24;
+    }
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    .results-table th, .results-table td {
+      border: 1px solid #ddd;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .results-table th {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    .results-table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .footer {
+      text-align: center;
+      padding: 2rem 0;
+      background-color: #333;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Conteo de Hojas en Árboles Binarios</h1>
+    <p>Una explicación visual del algoritmo para contar hojas en un árbol binario</p>
+  </header>
+  <div class="container">
+    <section>
+      <h2>Definición del Problema</h2>
+      <p>Contar el número de nodos hoja en un árbol binario. Un nodo hoja es aquel que no tiene hijos.</p>
+    </section>
+
+    <section>
+      <h2>Algoritmo</h2>
+      <pre><code>def count_leaves(root):
+    if root is None:
+        return 0
+    if root.left is None and root.right is None:
+        return 1
+    return count_leaves(root.left) + count_leaves(root.right)</code></pre>
+      <div class="explanation">
+        <p>Se recorre el árbol de forma recursiva. Si un nodo no tiene hijos, es una hoja y se suma. En caso contrario, se suman las hojas del subárbol izquierdo y derecho.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Visualización del Árbol</h2>
+      <div class="svg-container">
+        <svg id="leaf-tree" width="600" height="300">
+          <g class="node" id="node-1"><circle cx="300" cy="50" r="20" /><text x="300" y="50">1</text></g>
+          <g class="node" id="node-2"><circle cx="180" cy="120" r="20" /><text x="180" y="120">2</text></g>
+          <g class="node" id="node-3"><circle cx="420" cy="120" r="20" /><text x="420" y="120">3</text></g>
+          <g class="node" id="node-4"><circle cx="120" cy="200" r="20" /><text x="120" y="200">4</text></g>
+          <g class="node" id="node-5"><circle cx="240" cy="200" r="20" /><text x="240" y="200">5</text></g>
+          <line class="link" x1="300" y1="70" x2="180" y2="100" />
+          <line class="link" x1="300" y1="70" x2="420" y2="100" />
+          <line class="link" x1="180" y1="140" x2="120" y2="180" />
+          <line class="link" x1="180" y1="140" x2="240" y2="180" />
+        </svg>
+      </div>
+
+      <div class="controls">
+        <button id="start">Iniciar Conteo</button>
+        <button id="next">Siguiente Paso</button>
+        <button id="reset">Reiniciar</button>
+      </div>
+
+      <div class="step-display" id="step-info">Presiona "Iniciar Conteo" para comenzar.</div>
+    </section>
+
+    <section>
+      <h2>Casos de Prueba</h2>
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Caso</th><th>Esperado</th><th>Obtenido</th><th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Árbol normal</td><td>3</td><td>3</td><td>ÉXITO</td></tr>
+          <tr><td>Árbol vacío</td><td>0</td><td>0</td><td>ÉXITO</td></tr>
+          <tr><td>Un solo nodo</td><td>1</td><td>1</td><td>ÉXITO</td></tr>
+          <tr><td>Raíz con dos hojas</td><td>2</td><td>2</td><td>ÉXITO</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+  <footer class="footer">
+    <p>Ejemplo educativo - Algoritmos de Árboles Binarios - 2025</p>
+  </footer>
+  <script>
+    const steps = [
+      { id: "node-1", msg: "Visitando nodo 1" },
+      { id: "node-2", msg: "Visitando nodo 2" },
+      { id: "node-4", msg: "Nodo 4 es hoja. +1" },
+      { id: "node-5", msg: "Nodo 5 es hoja. +1" },
+      { id: "node-3", msg: "Nodo 3 es hoja. +1" },
+      { id: "node-1", msg: "Conteo total: 3 hojas" },
+    ];
+    let current = 0;
+    const stepInfo = document.getElementById("step-info");
+    const highlight = id => {
+      document.querySelectorAll(".node").forEach(n => n.classList.remove("active-node"));
+      const el = document.getElementById(id);
+      if (el) el.classList.add("active-node");
+    };
+    document.getElementById("start").onclick = () => {
+      current = 0;
+      stepInfo.textContent = steps[current].msg;
+      highlight(steps[current].id);
+      current++;
+    };
+    document.getElementById("next").onclick = () => {
+      if (current < steps.length) {
+        stepInfo.textContent = steps[current].msg;
+        highlight(steps[current].id);
+        current++;
+      } else {
+        stepInfo.textContent = "Conteo finalizado.";
+      }
+    };
+    document.getElementById("reset").onclick = () => {
+      current = 0;
+      stepInfo.textContent = "Presiona \"Iniciar Conteo\" para comenzar.";
+      document.querySelectorAll(".node").forEach(n => n.classList.remove("active-node"));
+    };
+  </script>
+</body>
+</html>
