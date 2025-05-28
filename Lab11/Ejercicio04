@@ -1,1 +1,64 @@
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val            # Valor del nodo
+        self.left = left          # Hijo izquierdo
+        self.right = right        # Hijo derecho
+
+def kth_smallest(root, k):
+    """Find kth smallest element in BST using in-order traversal"""
+    stack = []                   # Pila para recorrer el árbol en inorden de forma iterativa
+    current = root               # Comenzamos desde la raíz
+    count = 0                    # Contador para saber cuántos nodos hemos visitado
+    
+    while current or stack:      # Continuamos mientras haya nodos por visitar
+        while current:           # Bajamos al nodo más a la izquierda
+            stack.append(current)
+            current = current.left
+
+        current = stack.pop()    # Procesamos el nodo actual
+        count += 1               # Incrementamos el contador
+        
+        if count == k:           # Si ya llegamos al k-ésimo nodo, lo retornamos
+            return current.val
+        
+        current = current.right  # Vamos al subárbol derecho
+
+def build_bst(values):
+    # Función auxiliar para construir un BST a partir de una lista de valores
+    if not values:
+        return None
+
+    def insert(root, val):
+        if not root:
+            return TreeNode(val)         # Si no hay raíz, creamos un nuevo nodo
+        elif val < root.val:
+            root.left = insert(root.left, val)  # Insertamos en el subárbol izquierdo
+        else:
+            root.right = insert(root.right, val)  # Insertamos en el subárbol derecho
+        return root
+
+    root = None
+    for val in values:
+        root = insert(root, val)         # Insertamos cada valor en el árbol
+    return root
+
+# ✅ Casos de prueba
+
+# Caso 1: Segundo elemento más pequeño
+# BST: [3, 1, 4, 2] -> inorden: [1, 2, 3, 4]
+print(kth_smallest(build_bst([3, 1, 4, 2]), 2) == 2)  # 🎯 Segundo menor
+
+# Caso 2: Mínimo (primer elemento)
+# BST: [5, 3, 7, 2, 4, 6, 8] -> inorden: [2, 3, 4, 5, 6, 7, 8]
+print(kth_smallest(build_bst([5, 3, 7, 2, 4, 6, 8]), 1) == 2)  # 📊 Valor mínimo
+
+# Caso 3: Máximo (último elemento)
+print(kth_smallest(build_bst([5, 3, 7, 2, 4, 6, 8]), 7) == 8)  # 📈 Valor máximo
+
+# Caso 4: Elemento medio
+# BST: [4, 2, 6, 1, 3, 5, 7] -> inorden: [1, 2, 3, 4, 5, 6, 7]
+print(kth_smallest(build_bst([4, 2, 6, 1, 3, 5, 7]), 4) == 4)  # 🔗 Elemento central
+
+# Caso 5: Árbol con un solo nodo
+print(kth_smallest(build_bst([10]), 1) == 10)  # 🌱 Árbol de un solo nodo
 
